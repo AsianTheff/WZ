@@ -1,0 +1,210 @@
+repeat wait() until game:IsLoaded()
+
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({ Name = "🎄Holiday! World // Zero", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest", IntroText = "Script Made By Asian#9277" })
+
+
+----Settings----
+getgenv().autoChest = false;
+getgenv().autoFeed = false;
+getgenv().autoHatch = false;
+
+----Function----
+function data()
+	spawn(function ()
+        local args = {
+            [1] = "7S7cG8Gc06qLhhXV3n2a",  --- Ruchazcia Akun
+            [2] = {
+                ["animSet"] = "\255",
+                ["customization"] = {
+                    ["EyeWhiteColor"] = nil --[[Color3]],
+                    ["REyeColor"] = nil --[[Color3]],
+                    ["Marking"] = 1,
+                    ["HairColor"] = nil --[[Color3]],
+                    ["Scale"] = 1.0805882352941176,
+                    ["Face"] = "1",
+                    ["MarkingColor"] = nil --[[Color3]],
+                    ["Brows"] = "4",
+                    ["REye"] = "5",
+                    ["Skin"] = "2",
+                    ["LEye"] = "5",
+                    ["Mouth"] = "18",
+                    ["LEyeColor"] = nil --[[Color3]],
+                    ["Hair"] = "41"
+                }
+            }
+        }
+        game:GetService("ReplicatedStorage").Shared.Profile.RemodelCharacter:InvokeServer(unpack(args))
+	end)
+end
+
+
+function openChest(chestName)
+    spawn(function()
+        while autoChest == true do
+            wait(0.2)
+            local args = { [1] = chestName, [2] = 3 }
+            game:GetService("ReplicatedStorage").Shared.AuraChest.BuyChest:FireServer(unpack(args))
+            wait()
+        end
+    end)
+end
+
+
+function petFeed(foodName)
+
+    local inv = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[foodName]
+    spawn(function()
+        while autoFeed == true do
+            wait(0.2)
+            local args = { [1] = inv, [2] = true }
+            game:GetService("ReplicatedStorage").Shared.Pets.FeedPet:FireServer(unpack(args))
+        end
+    end)
+end
+
+
+function equipEgg()
+    spawn (function()
+        while autoHatch == true do
+    
+        local args = {
+            [1] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items.ChristmasEgg,
+            [2] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
+        }
+        
+        game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(unpack(args))
+        wait (0.5)
+        
+        game:GetService("ReplicatedStorage").Shared.Pets.Hatch:FireServer(Vector3.new())
+        wait (4.3)
+        end
+    end)
+end
+
+function equipEgg1()
+    spawn (function()
+        while autoHatch == true do
+    
+        local args = {
+            [1] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items.CatEggHalloween,
+            [2] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
+        }
+        
+        game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(unpack(args))
+        wait (0.5)
+        
+        game:GetService("ReplicatedStorage").Shared.Pets.Hatch:FireServer(Vector3.new())
+        wait (4.3)
+        end
+    end)
+end
+
+
+------------------------------------------------  Data  ------------------------------------------------
+local Tab = Window:MakeTab({
+	Name = "  Data 💾",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({ Name = "                                      DATA ROLLBACK " })
+
+Section:AddButton({
+	Name = "Click me senpai .. (♥‿♥)",
+	Callback = function()
+        data()
+        wait(0.8)
+            OrionLib:MakeNotification({
+                Name = "Status",
+                Content = "Your Data Has Been Stoled \n JK, Your Progress Will not Saved",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
+  	end    
+})
+
+------------------------------------------------  Aura  ------------------------------------------------
+local Aura = Window:MakeTab({
+	Name = "  Chest Aura 🎁",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local selectedChest;
+
+Aura:AddDropdown({
+	Name = "Select Chest",
+	Default = "",
+	Options = {"AntiAuraChest2022", "ChristmasAuraChest2022","CyberAuraChest","DragonAuraChest"},
+	Callback = function(value)
+        selectedChest = value;
+	end    
+})
+
+Aura:AddToggle({
+	Name = "Open Selected Chest",
+	Default = false,
+	Callback = function(value)
+        getgenv().autoChest = value
+        if value and selectedChest then
+		    openChest(selectedChest);
+        end
+	end    
+})
+
+-------------------------------------------------  Pet  -------------------------------------------------
+local Pet = Window:MakeTab({
+	Name = "  Pet 🐾 ",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Pet:AddSection({ Name = "Auto Feed" })
+
+local selectedFood;
+
+Pet:AddDropdown({
+	Name = "Select Food",
+	Default = "",
+	Options = {"Strawberry", "Doughnut", "CakeSlice", "Sundae", "PetCandy"},
+	Callback = function(value)
+        selectedFood = value;
+	end    
+})
+
+Pet:AddToggle({
+	Name = "Feed Selected Chest",
+	Default = false,
+	Callback = function(value)
+        getgenv().autoFeed = value
+        if value and selectedFood then
+		    petFeed(selectedFood);
+        end
+	end    
+})
+
+local Section = Pet:AddSection({ Name = "Auto Hatch" })
+
+Pet:AddToggle({
+	Name = "ChristmasEgg",
+	Default = false,
+	Callback = function(value)
+        getgenv().autoHatch = value
+        if value then
+		    equipEgg();
+        end
+	end    
+})
+
+Pet:AddToggle({
+	Name = "CatEggHalloween",
+	Default = false,
+	Callback = function(value)
+        getgenv().autoHatch = value
+        if value then
+		    equipEgg1();
+        end
+	end    
+})
