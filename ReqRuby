@@ -113,13 +113,13 @@ local Tab = Window:MakeTab({
 local Section = Tab:AddSection({ Name = "                                      DATA ROLLBACK " })
 
 Section:AddButton({
-	Name = "Click me senpai .. (♥‿♥)",
+	Name = " Click To Enable ",
 	Callback = function()
         data()
         wait(0.8)
             OrionLib:MakeNotification({
                 Name = "Status",
-                Content = "Your Data Has Been Stoled \n JK, Your Progress Will not Saved",
+                Content = "Data Rollback Actived \n \n All Progress Will not saved",
                 Image = "rbxassetid://4483345998",
                 Time = 6000
             })
