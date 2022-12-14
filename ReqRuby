@@ -119,7 +119,7 @@ Section:AddButton({
         wait(0.8)
             OrionLib:MakeNotification({
                 Name = "Status",
-                Content = "Data Rollback Actived \n \n All Progress Will not saved",
+                Content = " 🟢 ACTIVE 🟢 ",
                 Image = "rbxassetid://4483345998",
                 Time = 6000
             })
