@@ -118,9 +118,9 @@ Section:AddButton({
         data()
         wait(0.8)
             OrionLib:MakeNotification({
-                Name = "Status",
-                Content = " 🟢 ACTIVE 🟢 ",
-                Image = "rbxassetid://4483345998",
+                Name = "AKTIF   ✅",
+                Content = "",
+                Image = "",
                 Time = 6000
             })
   	end    
