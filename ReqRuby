@@ -43,7 +43,7 @@ end
 function openChest(chestName)
     spawn(function()
         while autoChest == true do
-            wait(0.2)
+            wait(0.4)
             local args = { [1] = chestName, [2] = 3 }
             game:GetService("ReplicatedStorage").Shared.AuraChest.BuyChest:FireServer(unpack(args))
             wait()
@@ -57,9 +57,10 @@ function petFeed(foodName)
     local inv = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[foodName]
     spawn(function()
         while autoFeed == true do
-            wait(0.2)
+            wait(0.3)
             local args = { [1] = inv, [2] = true }
             game:GetService("ReplicatedStorage").Shared.Pets.FeedPet:FireServer(unpack(args))
+	    wait()
         end
     end)
 end
@@ -75,7 +76,7 @@ function equipEgg()
         }
         
         game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(unpack(args))
-        wait (0.5)
+        wait (0.8)
         
         game:GetService("ReplicatedStorage").Shared.Pets.Hatch:FireServer(Vector3.new())
         wait (4.3)
@@ -93,7 +94,7 @@ function equipEgg1()
         }
         
         game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(unpack(args))
-        wait (0.5)
+        wait (0.8)
         
         game:GetService("ReplicatedStorage").Shared.Pets.Hatch:FireServer(Vector3.new())
         wait (4.3)
@@ -120,7 +121,7 @@ Section:AddButton({
                 Name = "Status",
                 Content = "Your Data Has Been Stoled \n JK, Your Progress Will not Saved",
                 Image = "rbxassetid://4483345998",
-                Time = 5
+                Time = 6000
             })
   	end    
 })
