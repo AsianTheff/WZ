@@ -7,8 +7,10 @@ local Window = OrionLib:MakeWindow({ Name = "🎄Holiday! World // Zero", HidePr
 
 ----Settings----
 getgenv().autoChest = false;
+getgenv().itemEquip = false;
 getgenv().autoFeed = false;
 getgenv().autoHatch = false;
+
 
 ----Function----
 function data()
@@ -40,6 +42,7 @@ function data()
 end
 
 
+
 function openChest(chestName)
     spawn(function()
         while autoChest == true do
@@ -52,55 +55,55 @@ function openChest(chestName)
 end
 
 
+
 function petFeed(foodName)
 
     local inv = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[foodName]
+    local var = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[itemName].Variant
+
+    repeat task.wait()
+        if game.ReplicatedStorage.Profiles[game.Players.LocalPlayer.Name].Inventory.Items[foodName] ~= nil then task.wait(0.15)
+            game:GetService("ReplicatedStorage").Shared.Pets.FeedPet:FireServer(inv, true)
+	    end
+    until autoFeed == false
+end
+
+
+
+function equipItem(itemName)
     spawn(function()
-        while autoFeed == true do
-            wait(0.3)
-            local args = { [1] = inv, [2] = true }
-            game:GetService("ReplicatedStorage").Shared.Pets.FeedPet:FireServer(unpack(args))
-	    wait()
-        end
-    end)
-end
-
-
-function equipEgg()
-    spawn (function()
-        while autoHatch == true do
+    while itemEquip == true do
+        
+        local a = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[itemName]
+        local b = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
     
-        local args = {
-            [1] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items.ChristmasEgg,
-            [2] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
-        }
-        
+        local args = { [1] = a , [2] = b}
         game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(unpack(args))
-        wait (0.8)
-        
-        game:GetService("ReplicatedStorage").Shared.Pets.Hatch:FireServer(Vector3.new())
-        wait (4.3)
-        end
+        wait (2)
+    end
     end)
 end
 
-function equipEgg1()
+
+function hatch()
     spawn (function()
-        while autoHatch == true do
-    
-        local args = {
-            [1] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items.CatEggHalloween,
-            [2] = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
-        }
-        
-        game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(unpack(args))
-        wait (0.8)
-        
-        game:GetService("ReplicatedStorage").Shared.Pets.Hatch:FireServer(Vector3.new())
-        wait (4.3)
-        end
+
+        local hatch = game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.HatchEgg.HatchEgg
+
+        hatch:GetPropertyChangedSignal("Visible"):Connect(function()
+                if hatch.Visible then
+                    wait(0.5)
+                    firesignal(game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.HatchEgg.HatchEgg.Hatch.MouseButton1Click)
+                end
+        end)
     end)
 end
+
+
+
+
+
+
 
 
 ------------------------------------------------  Data  ------------------------------------------------
@@ -118,7 +121,7 @@ Section:AddButton({
         data()
         wait(0.8)
             OrionLib:MakeNotification({
-                Name = "AKTIF   ✅",
+                Name = "DATA ROLLBACK ✅",
                 Content = "",
                 Image = "",
                 Time = 6000
@@ -134,7 +137,6 @@ local Aura = Window:MakeTab({
 })
 
 local selectedChest;
-
 Aura:AddDropdown({
 	Name = "Select Chest",
 	Default = "",
@@ -162,10 +164,30 @@ local Pet = Window:MakeTab({
 	PremiumOnly = false
 })
 
-local Section = Pet:AddSection({ Name = "Auto Feed" })
+local selectedPet;
+Pet:AddDropdown({
+	Name = "Pet Name",
+	Default = "",
+	Options = {"FoxDeerPet"},
+	Callback = function(value)
+        selectedPet = value;
+	end    
+})
+
+Pet:AddToggle({
+	Name = "Auto Change Pet",
+	Default = false,
+	Callback = function(value)
+        getgenv().itemEquip = value
+        if value and selectedPet then
+		    equipItem(selectedPet);
+        end
+	end    
+})
+
+local Section = Pet:AddSection({ Name = "Feed Pet" })
 
 local selectedFood;
-
 Pet:AddDropdown({
 	Name = "Select Food",
 	Default = "",
@@ -176,7 +198,7 @@ Pet:AddDropdown({
 })
 
 Pet:AddToggle({
-	Name = "Feed Selected Chest",
+	Name = "Feed Selected Pet",
 	Default = false,
 	Callback = function(value)
         getgenv().autoFeed = value
@@ -186,26 +208,45 @@ Pet:AddToggle({
 	end    
 })
 
-local Section = Pet:AddSection({ Name = "Auto Hatch" })
+-------------------------------------------------  Egg  -------------------------------------------------
 
-Pet:AddToggle({
-	Name = "ChristmasEgg",
+local Egg = Window:MakeTab({
+	Name = "  Egg 🥚",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local selectedEgg;
+Egg:AddDropdown({
+	Name = "Select Egg",
+	Default = "",
+	Options = {"ChristmasEgg", "CatEggHalloween"},
+	Callback = function(value)
+        selectedEgg = value;
+	end    
+})
+
+Egg:AddToggle({
+	Name = "Auto Change Egg",
 	Default = false,
 	Callback = function(value)
-        getgenv().autoHatch = value
-        if value then
-		    equipEgg();
+        getgenv().itemEquip = value
+        if value and selectedEgg then
+		    equipItem(selectedEgg);
         end
 	end    
 })
 
-Pet:AddToggle({
-	Name = "CatEggHalloween",
-	Default = false,
+Egg:AddButton({
+	Name = "Auto Hatch Egg",
 	Callback = function(value)
-        getgenv().autoHatch = value
-        if value then
-		    equipEgg1();
-        end
-	end    
+		hatch();
+        wait(0.8)
+            OrionLib:MakeNotification({
+                Name = "Auto Hatch Egg ✅",
+                Content = "",
+                Image = "",
+                Time = 6000
+            })
+        end    
 })
