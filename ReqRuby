@@ -5,18 +5,21 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local Window = OrionLib:MakeWindow({ Name = "🎄Holiday! World // Zero", HidePremium = true, SaveConfig = false, ConfigFolder = "OrionTest", IntroText = "Script Made By Asian#9277" })
 
 
+
 ----Settings----
 getgenv().autoChest = false;
-getgenv().itemEquip = false;
+getgenv().E_Pet = false;
+getgenv().E_Egg = false;
 getgenv().autoFeed = false;
 getgenv().autoHatch = false;
+
 
 
 ----Function----
 function data()
 	spawn(function ()
         local args = {
-            [1] = "7S7cG8Gc06qLhhXV3n2a",  --- Ruchazcia Akun
+            [1] = "7S7cG8Gc06qLhhXV3n2a",  --- Ruchazcia                                      --- Mustbe_Top Akun = f8X5Z3Q4fY1QGQNL2gm6
             [2] = {
                 ["animSet"] = "\255",
                 ["customization"] = {
@@ -45,7 +48,7 @@ end
 
 function openChest(chestName)
     spawn(function()
-        while autoChest == true do
+        while autoChest do
             wait(0.4)
             local args = { [1] = chestName, [2] = 3 }
             game:GetService("ReplicatedStorage").Shared.AuraChest.BuyChest:FireServer(unpack(args))
@@ -57,27 +60,45 @@ end
 
 
 function petFeed(foodName)
-
-    local inv = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[foodName]
-    local var = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[itemName].Variant
-
+    local food = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[foodName]
     repeat task.wait()
-        if game.ReplicatedStorage.Profiles[game.Players.LocalPlayer.Name].Inventory.Items[foodName] ~= nil then task.wait(0.15)
-            game:GetService("ReplicatedStorage").Shared.Pets.FeedPet:FireServer(inv, true)
+        if food ~= nil then task.wait(0.25)
+            game:GetService("ReplicatedStorage").Shared.Pets.FeedPet:FireServer(food, true)
 	    end
     until autoFeed == false
 end
 
 
-
-function equipItem(itemName)
-    spawn(function()
-    while itemEquip == true do
-        
-        local a = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[itemName]
-        local b = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
+function equipPet(PetName)
+    local petFolder = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items
+    local equ = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
     
-        local args = { [1] = a , [2] = b}
+    spawn(function()
+        while E_Pet and wait() do
+            for _,pet in pairs(petFolder:GetDescendants()) do 
+                pcall(function()
+                    if pet:IsA("Folder") and pet.Name == PetName then
+                        if pet.Level.Value < 40 and E_Pet then
+                            repeat task.wait(2)
+                                game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(pet,equ)
+                            until pet.Level.Value == 40 or E_Pet == false
+                        end
+                    end
+                end)
+            end
+        end
+    end)
+end
+
+
+
+
+function equipEgg(eggName)
+    spawn(function()
+    while E_Egg do
+        local inv = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Inventory.Items[eggName]
+        local eq = game:GetService("ReplicatedStorage").Profiles[game.Players.LocalPlayer.Name].Equip.Pet
+        local args = { [1] = inv , [2] = eq }
         game:GetService("ReplicatedStorage").Shared.Inventory.EquipItem:FireServer(unpack(args))
         wait (2)
     end
@@ -87,9 +108,7 @@ end
 
 function hatch()
     spawn (function()
-
         local hatch = game:GetService("Players")[game.Players.LocalPlayer.Name].PlayerGui.HatchEgg.HatchEgg
-
         hatch:GetPropertyChangedSignal("Visible"):Connect(function()
                 if hatch.Visible then
                     wait(0.5)
@@ -98,8 +117,6 @@ function hatch()
         end)
     end)
 end
-
-
 
 
 
@@ -121,10 +138,10 @@ Section:AddButton({
         data()
         wait(0.8)
             OrionLib:MakeNotification({
-                Name = "DATA ROLLBACK ✅",
+                Name = "DATA RB ACTIVED ✅",
                 Content = "",
                 Image = "",
-                Time = 6000
+                Time = 6
             })
   	end    
 })
@@ -165,10 +182,11 @@ local Pet = Window:MakeTab({
 })
 
 local selectedPet;
+
 Pet:AddDropdown({
 	Name = "Pet Name",
 	Default = "",
-	Options = {"FoxDeerPet"},
+	Options = {"","FoxDeerPet"},
 	Callback = function(value)
         selectedPet = value;
 	end    
@@ -178,9 +196,9 @@ Pet:AddToggle({
 	Name = "Auto Change Pet",
 	Default = false,
 	Callback = function(value)
-        getgenv().itemEquip = value
+        getgenv().E_Pet = value
         if value and selectedPet then
-		    equipItem(selectedPet);
+		    equipPet(selectedPet);
         end
 	end    
 })
@@ -230,9 +248,9 @@ Egg:AddToggle({
 	Name = "Auto Change Egg",
 	Default = false,
 	Callback = function(value)
-        getgenv().itemEquip = value
+        getgenv().E_Egg = value
         if value and selectedEgg then
-		    equipItem(selectedEgg);
+		    equipEgg(selectedEgg);
         end
 	end    
 })
@@ -246,7 +264,7 @@ Egg:AddButton({
                 Name = "Auto Hatch Egg ✅",
                 Content = "",
                 Image = "",
-                Time = 6000
+                Time = 6
             })
         end    
 })
