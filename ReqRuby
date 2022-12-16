@@ -141,7 +141,7 @@ Section:AddButton({
                 Name = "DATA RB ACTIVED ✅",
                 Content = "",
                 Image = "",
-                Time = 6
+                Time = 6000
             })
   	end    
 })
@@ -264,7 +264,7 @@ Egg:AddButton({
                 Name = "Auto Hatch Egg ✅",
                 Content = "",
                 Image = "",
-                Time = 6
+                Time = 6000
             })
         end    
 })
