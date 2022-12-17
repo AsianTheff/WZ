@@ -12,6 +12,8 @@ getgenv().E_Pet = false;
 getgenv().E_Egg = false;
 getgenv().autoFeed = false;
 getgenv().autoHatch = false;
+getgenv().buyCoin = false;
+getgenv().eventShop = false;
 
 
 
@@ -45,11 +47,17 @@ function data()
 end
 
 
+function tp()
+    spawn(function()
+        game:GetService("TeleportService"):Teleport(2727067538, LocalPlayer)
+    end)
+end
+
 
 function openChest(chestName)
     spawn(function()
         while autoChest do
-            wait(0.4)
+            wait(0.1)
             local args = { [1] = chestName, [2] = 3 }
             game:GetService("ReplicatedStorage").Shared.AuraChest.BuyChest:FireServer(unpack(args))
             wait()
@@ -92,7 +100,6 @@ end
 
 
 
-
 function equipEgg(eggName)
     spawn(function()
     while E_Egg do
@@ -120,7 +127,23 @@ end
 
 
 
+function Coin()
+    repeat task.wait(0.2)
+            game:GetService("ReplicatedStorage").Shared.Shop.PurchaseEventTokenTier:FireServer(3)
+    until buyCoin == false
+end
 
+
+
+function buyItem(itemName)
+    spawn(function()
+        while eventShop do
+            local shopItem = game:GetService("ReplicatedStorage").Shared.Shop.LocalShops.Christmas2022.Items[itemName]
+            local args = { [1] = "Christmas2022", [2] = shopItem  }
+            game:GetService("ReplicatedStorage").Shared.Shop.BuyLocal:InvokeServer(unpack(args))
+        end
+    end)
+end
 
 
 ------------------------------------------------  Data  ------------------------------------------------
@@ -131,7 +154,6 @@ local Tab = Window:MakeTab({
 })
 
 local Section = Tab:AddSection({ Name = "                                      DATA ROLLBACK " })
-
 Section:AddButton({
 	Name = " Click To Enable ",
 	Callback = function()
@@ -146,13 +168,26 @@ Section:AddButton({
   	end    
 })
 
+
+local Section = Tab:AddSection({ Name = "Teleport" })
+Section:AddButton({
+	Name = " Teleport to main menu ",
+	Callback = function()
+        tp()
+  	end    
+})
+
+
+
 ------------------------------------------------  Aura  ------------------------------------------------
 local Aura = Window:MakeTab({
-	Name = "  Chest Aura 🎁",
+	Name = "  Shop 🛒",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 
+
+local Section = Aura:AddSection({ Name = "Chest Aura" })
 local selectedChest;
 Aura:AddDropdown({
 	Name = "Select Chest",
@@ -170,6 +205,41 @@ Aura:AddToggle({
         getgenv().autoChest = value
         if value and selectedChest then
 		    openChest(selectedChest);
+        end
+	end    
+})
+
+local Section = Aura:AddSection({ Name = "Holiday Event" })
+
+Aura:AddToggle({
+	Name = "Auto Buy 100 Coin",
+	Default = false,
+	Callback = function(value)
+        getgenv().buyCoin = value
+        if value then
+		    Coin();
+        end
+	end    
+})
+
+
+local selectedShop;
+Aura:AddDropdown({
+	Name = "Select Item",
+	Default = "",
+	Options = {"DyableWinterScarf", "RedNose","SantaHat","FemaleSantaHat"},
+	Callback = function(value)
+        selectedShop = value;
+	end    
+})
+
+Aura:AddToggle({
+	Name = "Buy Selected Item",
+	Default = false,
+	Callback = function(value)
+        getgenv().eventShop = value
+        if value and selectedChest then
+		    buyItem(selectedShop);
         end
 	end    
 })
@@ -264,7 +334,7 @@ Egg:AddButton({
                 Name = "Auto Hatch Egg ✅",
                 Content = "",
                 Image = "",
-                Time = 6000
+                Time = 300
             })
         end    
 })
