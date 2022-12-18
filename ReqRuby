@@ -238,7 +238,7 @@ Aura:AddToggle({
 	Default = false,
 	Callback = function(value)
         getgenv().eventShop = value
-        if value and selectedChest then
+        if value and selectedShop then
 		    buyItem(selectedShop);
         end
 	end    
